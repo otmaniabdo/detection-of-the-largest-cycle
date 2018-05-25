@@ -1,0 +1,197 @@
+/*    Arc TABLE    */
+
+
+create table
+	arc(
+	id NUMBER(10) not null primary key,
+	name varchar(25),
+	NodeSource NUMBER(10),
+	NodeDestination NUMBER(10));
+	
+CREATE SEQUENCE arc_seq START WITH 1 INCREMENT BY 1;
+
+
+CREATE OR REPLACE TRIGGER arc_bir 
+BEFORE INSERT ON arc 
+FOR EACH ROW
+
+BEGIN
+  SELECT arc_seq.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+/*    Noeud TABLE    */
+create table
+	noeud(
+	id NUMBER(10) not null primary key,
+	name varchar(25),
+	Gid NUMBER(10));
+	
+CREATE SEQUENCE noeud_seq START WITH 1 INCREMENT BY 1;
+
+
+CREATE OR REPLACE TRIGGER noeud_bir 
+BEFORE INSERT ON noeud 
+FOR EACH ROW
+
+BEGIN
+  SELECT noeud_seq.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+/*  Graphe TABLE*/
+
+create table
+	graph(
+	id NUMBER(10) not null primary key,
+	name varchar(25));
+	
+CREATE SEQUENCE graph_seq START WITH 1 INCREMENT BY 1;
+
+
+CREATE OR REPLACE TRIGGER graph_bir 
+BEFORE INSERT ON graph 
+FOR EACH ROW
+
+BEGIN
+  SELECT graph_seq.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+/* relation graph - arc */
+
+create table
+	graph_arc(
+	id NUMBER(10) not null primary key,
+	graphid NUMBER(10),
+	arcid NUMBER(10),
+	CONSTRAINT fk_graph_id    FOREIGN KEY (graphid) REFERENCES graph(id),
+	CONSTRAINT fk_arc_id    FOREIGN KEY (arcid) REFERENCES arc(id));
+	
+CREATE SEQUENCE ag_seq START WITH 1 INCREMENT BY 1;
+
+
+CREATE OR REPLACE TRIGGER ag_bir 
+BEFORE INSERT ON graph_arc 
+FOR EACH ROW
+
+BEGIN
+  SELECT ag_seq.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+/* relation graph - noeud */
+
+create table
+	graph_noeud(
+	id NUMBER(10) not null primary key,
+	graphid NUMBER(10),
+	noeudid NUMBER(10),
+	CONSTRAINT fk_graph2_id    FOREIGN KEY (graphid) REFERENCES graph(id),
+	CONSTRAINT fk_noeud_id    FOREIGN KEY (noeudid) REFERENCES noeud(id));
+	
+CREATE SEQUENCE an_seq START WITH 1 INCREMENT BY 1;
+
+
+CREATE OR REPLACE TRIGGER an_bir 
+BEFORE INSERT ON graph_noeud 
+FOR EACH ROW
+
+BEGIN
+  SELECT an_seq.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+/* Insert DATABASE*/
+insert into graphe(name) values('Graphe 1');
+insert into graphe(name) values('Graphe 2');
+
+/* Insert Values*/
+
+insert into noeud(name) values (1);
+insert into noeud(name) values (2);
+insert into noeud(name) values (3);
+insert into noeud(name) values (4);
+insert into noeud(name) values (5);
+insert into noeud(name) values (6);
+insert into noeud(name) values (7);
+
+/* Insert arcs */
+
+/* Graphe  1*/
+insert into arc(name,NodeSource,NodeDestination) values('1 -> 2',1,2);
+insert into arc(name,NodeSource,NodeDestination) values('2 -> 6',2,6);
+insert into arc(name,NodeSource,NodeDestination) values('6 -> 7',6,7);
+insert into arc(name,NodeSource,NodeDestination) values('5 -> 7',5,7);
+insert into arc(name,NodeSource,NodeDestination) values('4 -> 5',4,5);
+insert into arc(name,NodeSource,NodeDestination) values('5 -> 1',5,1);
+insert into arc(name,NodeSource,NodeDestination) values('3 -> 1',3,1);
+insert into arc(name,NodeSource,NodeDestination) values('3 -> 4',3,4);
+insert into arc(name,NodeSource,NodeDestination) values('2 -> 3',2,3);
+
+/* Graphe 2*/
+insert into arc(name,NodeSource,NodeDestination) values('1 -> 5',1,5);
+insert into arc(name,NodeSource,NodeDestination) values('2 -> 1',2,1);
+insert into arc(name,NodeSource,NodeDestination) values('3 -> 1',3,1);
+insert into arc(name,NodeSource,NodeDestination) values('5 -> 3',5,3);
+insert into arc(name,NodeSource,NodeDestination) values('5 -> 2',5,2);
+insert into arc(name,NodeSource,NodeDestination) values('5 -> 7',5,7);
+insert into arc(name,NodeSource,NodeDestination) values('6 -> 3',6,3);
+insert into arc(name,NodeSource,NodeDestination) values('4 -> 2',4,2);
+insert into arc(name,NodeSource,NodeDestination) values('7 -> 4',7,4);
+insert into arc(name,NodeSource,NodeDestination) values('7 -> 6',7,6);
+
+/* insert graphe - arc */
+/*graphe 1*/
+insert into graph_arc(graphid,arcid) values(1,1);
+insert into graph_arc(graphid,arcid) values(1,2);
+insert into graph_arc(graphid,arcid) values(1,3);
+insert into graph_arc(graphid,arcid) values(1,4);
+insert into graph_arc(graphid,arcid) values(1,5);
+insert into graph_arc(graphid,arcid) values(1,6);
+insert into graph_arc(graphid,arcid) values(1,7);
+insert into graph_arc(graphid,arcid) values(1,8);
+insert into graph_arc(graphid,arcid) values(1,9);
+insert into graph_arc(graphid,arcid) values(1,9);
+
+/*graphe 2 */
+insert into graph_arc(graphid,arcid) values(21,10);
+insert into graph_arc(graphid,arcid) values(21,11);
+insert into graph_arc(graphid,arcid) values(21,12);
+insert into graph_arc(graphid,arcid) values(21,13);
+insert into graph_arc(graphid,arcid) values(21,14);
+insert into graph_arc(graphid,arcid) values(21,15);
+insert into graph_arc(graphid,arcid) values(21,16);
+insert into graph_arc(graphid,arcid) values(21,17);
+insert into graph_arc(graphid,arcid) values(21,18);
+insert into graph_arc(graphid,arcid) values(21,19);
+/* insert grape - noeud*/
+
+/* graphe 1 */
+insert into graph_noeud(graphid,noeudid) values(1,1);
+insert into graph_noeud(graphid,noeudid) values(1,2);
+insert into graph_noeud(graphid,noeudid) values(1,3);
+insert into graph_noeud(graphid,noeudid) values(1,4);
+insert into graph_noeud(graphid,noeudid) values(1,5);
+insert into graph_noeud(graphid,noeudid) values(1,6);
+insert into graph_noeud(graphid,noeudid) values(1,7);
+
+/*graphe 2*/
+
+insert into graph_noeud(graphid,noeudid) values(21,1);
+insert into graph_noeud(graphid,noeudid) values(21,2);
+insert into graph_noeud(graphid,noeudid) values(21,3);
+insert into graph_noeud(graphid,noeudid) values(21,4);
+insert into graph_noeud(graphid,noeudid) values(21,5);
+insert into graph_noeud(graphid,noeudid) values(21,6);
+insert into graph_noeud(graphid,noeudid) values(21,7);
